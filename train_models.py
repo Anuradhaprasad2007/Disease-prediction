@@ -36,10 +36,9 @@ from sklearn.metrics import (
 warnings.filterwarnings("ignore")
 
 # ── Resolve paths regardless of working directory ──────────────────────────────
-SCRIPT_DIR  = os.path.dirname(os.path.abspath(__file__))
-PROJECT_DIR = os.path.dirname(SCRIPT_DIR)
-DATA_DIR    = os.path.join(PROJECT_DIR, "data")
-MODEL_DIR   = os.path.join(PROJECT_DIR, "models")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR    = os.path.join(BASE_DIR, "data")
+MODEL_DIR   = os.path.join(BASE_DIR, "models")
 os.makedirs(MODEL_DIR, exist_ok=True)
 
 # ── Helper ─────────────────────────────────────────────────────────────────────
@@ -111,10 +110,21 @@ for col in zero_cols:
         print(f"  [CLEAN] {col}: {n} zeros → imputed with median")
 
 # --- Feature Engineering ---
-df_d["BMI_Category"] = pd.cut(df_d["BMI"],
-    bins=[0, 18.5, 25, 30, 100], labels=[0, 1, 2, 3]).astype(int)
-df_d["Age_Group"] = pd.cut(df_d["Age"],
-    bins=[0, 30, 45, 60, 100], labels=[0, 1, 2, 3]).astype(int)
+# include_lowest=True ensures the minimum value is included in the first bin.
+# fillna(0) handles any edge-case NaNs before casting to int.
+df_d["BMI_Category"] = pd.cut(
+    df_d["BMI"],
+    bins=[0, 18.5, 25, 30, 100],
+    labels=[0, 1, 2, 3],
+    include_lowest=True,
+).astype(float).fillna(0).astype(int)
+
+df_d["Age_Group"] = pd.cut(
+    df_d["Age"],
+    bins=[0, 30, 45, 60, 100],
+    labels=[0, 1, 2, 3],
+    include_lowest=True,
+).astype(float).fillna(0).astype(int)
 df_d["Glucose_Insulin_Ratio"] = df_d["Glucose"] / (df_d["Insulin"] + 1)
 
 # --- Correlation heatmap ---
@@ -155,7 +165,7 @@ save_fig("diabetes_roc.png")
 # --- Save ---
 joblib.dump(model_d,          os.path.join(MODEL_DIR, "diabetes_model.pkl"))
 joblib.dump(scaler_d,         os.path.join(MODEL_DIR, "diabetes_scaler.pkl"))
-joblib.dump(list(X_d.columns),os.path.join(MODEL_DIR, "diabetes_features.pkl"))
+joblib.dump(X_d.columns.tolist(), os.path.join(MODEL_DIR, "diabetes_features.pkl"))
 print("  ✅ Diabetes model saved.")
 
 
@@ -221,7 +231,7 @@ save_fig("heart_roc.png")
 
 joblib.dump(model_h,          os.path.join(MODEL_DIR, "heart_model.pkl"))
 joblib.dump(scaler_h,         os.path.join(MODEL_DIR, "heart_scaler.pkl"))
-joblib.dump(list(X_h.columns),os.path.join(MODEL_DIR, "heart_features.pkl"))
+joblib.dump(X_h.columns.tolist(), os.path.join(MODEL_DIR, "heart_features.pkl"))
 joblib.dump({"sex": le_sex, "cp": le_cp, "thal": le_thal},
             os.path.join(MODEL_DIR, "heart_encoders.pkl"))
 print("  ✅ Heart disease model saved.")
@@ -294,7 +304,7 @@ save_fig("liver_roc.png")
 
 joblib.dump(model_l,           os.path.join(MODEL_DIR, "liver_model.pkl"))
 joblib.dump(scaler_l,          os.path.join(MODEL_DIR, "liver_scaler.pkl"))
-joblib.dump(list(X_l.columns), os.path.join(MODEL_DIR, "liver_features.pkl"))
+joblib.dump(X_l.columns.tolist(), os.path.join(MODEL_DIR, "liver_features.pkl"))
 joblib.dump({"Gender": le_gen}, os.path.join(MODEL_DIR, "liver_encoders.pkl"))
 print("  ✅ Liver disease model saved.")
 

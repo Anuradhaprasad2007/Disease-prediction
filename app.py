@@ -389,8 +389,8 @@ with tab_viz:
     st.markdown("## 📊 Model Visualizations")
     st.info("Run `notebooks/train_models.py` first to generate these visualizations.")
 
-    BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
-    MODEL_DIR   = os.path.join(os.path.dirname(BACKEND_DIR), "models")
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    MODEL_DIR = os.path.join(BASE_DIR, "models")
 
     def show_image(fname, caption):
         path = os.path.join(MODEL_DIR, fname)

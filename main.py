@@ -23,8 +23,8 @@ from pydantic import BaseModel, Field
 from typing import Optional
 
 # ── Resolve model directory ───────────────────────────────────────────────────
-BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_DIR   = os.path.join(os.path.dirname(BACKEND_DIR), "models")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_DIR = os.path.join(BASE_DIR, "models")
 
 # ── Load models, scalers, encoders ───────────────────────────────────────────
 def load(name):
