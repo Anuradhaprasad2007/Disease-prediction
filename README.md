@@ -62,8 +62,8 @@ This will:
 
 ### Step 3: Start the Backend API
 ```bash
-cd backend
-uvicorn main:app --reload --port 8000
+
+python -m uvicorn main:app --reload
 ```
 > API will be live at: http://localhost:8000
 > Docs at: http://localhost:8000/docs
@@ -71,8 +71,8 @@ uvicorn main:app --reload --port 8000
 ### Step 4: Start the Streamlit Frontend
 Open a **new terminal**:
 ```bash
-cd frontend
-streamlit run app.py
+
+python -m streamlit run app.py
 ```
 > App will open at: http://localhost:8501
 
